@@ -1,6 +1,6 @@
 # IR File Upload Tool
 
-This tool will zip and upload all files within the cwd to a speficied S3 bucket. The tool will ignore the executable and the zip file it creates when adding all of the files to the archive.
+This tool will zip and upload all files within the cwd to a specified S3 bucket. The tool will ignore the executable and the zip file it creates when adding all of the files to the archive.
 
 ## Usage
 Run the compiled executable.
