@@ -106,7 +106,7 @@ func main() {
 		}
 
 		//ignore IR Upload executable
-		if info.Name() == "IRUpload.exe" {
+		if info.Name() == "awsupload.exe" {
 			return nil
 		}
 
