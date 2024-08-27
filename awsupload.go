@@ -1,4 +1,4 @@
-//Upload files in containing folder to
+//Upload files in containing folder to IR upload bucket
 
 package main
 
@@ -15,32 +15,17 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	"github.com/joho/godotenv"
 )
 
 var uploader *s3manager.Uploader
 var filename string
 
-// GetEnvWithKey : get env value
-func GetEnvWithKey(key string) string {
-	return os.Getenv(key)
-}
-
-func LoadEnv() { //load var from .env
-	err := godotenv.Load(".env")
-	if err != nil {
-		log.Fatalf("Error loading .env file")
-		os.Exit(1)
-	}
-}
-
 // create uploader to load ZIP file to S3
 func newUploader() *s3manager.Uploader {
-	LoadEnv()
 
 	s3Config := &aws.Config{
-		Region:      aws.String(GetEnvWithKey("AWS_REGION")),
-		Credentials: credentials.NewStaticCredentials(GetEnvWithKey("AWS_ACCESS_KEY_ID"), GetEnvWithKey("AWS_SECRET_ACCESS_KEY"), ""),
+		Region:      aws.String(AWS_REGION),
+		Credentials: credentials.NewStaticCredentials(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, ""),
 	}
 	s3Session := session.New(s3Config)
 
@@ -56,17 +41,23 @@ func upload() {
 
 	f, err := os.Open(filename)
 	if err != nil {
-		log.Print(err)
+		fmt.Println(err)
+		fmt.Printf("Press any key to exit...")
+		b := make([]byte, 1)
+		os.Stdin.Read(b)
 	}
 
 	result, err := uploader.Upload(&s3manager.UploadInput{
-		Bucket: aws.String(GetEnvWithKey("S3_BUCKET")), // bucket's name
-		Key:    aws.String(filename),                   // files destination location
-		Body:   f,                                      // file content
+		Bucket: aws.String(S3_BUCKET), // bucket's name
+		Key:    aws.String(filename),  // files destination location
+		Body:   f,                     // file content
 	})
 
 	if err != nil {
-		log.Println(err)
+		fmt.Println(err)
+		fmt.Printf("Press any key to exit...")
+		b := make([]byte, 1)
+		os.Stdin.Read(b)
 	}
 	fmt.Printf("file uploaded to, %s\n", result.Location)
 }
@@ -76,7 +67,9 @@ func main() {
 	hostname, err := (os.Hostname())
 	if err != nil {
 		fmt.Println(err)
-		os.Exit(1)
+		fmt.Printf("Press any key to exit...")
+		b := make([]byte, 1)
+		os.Stdin.Read(b)
 	}
 	//create filename using hostname and current datetime in specific format
 	curTime := time.Now().Format("2006-01-02_1504")
@@ -152,4 +145,9 @@ func main() {
 
 	uploader = newUploader()
 	upload()
+
+	fmt.Printf("Press any key to exit...")
+	b := make([]byte, 1)
+	os.Stdin.Read(b)
+
 }

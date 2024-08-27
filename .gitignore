@@ -1,3 +1,5 @@
 
 .env
 tempCodeRunnerFile.go
+env.go
+awsupload.exe
